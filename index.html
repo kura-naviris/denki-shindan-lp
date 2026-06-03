@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>法人でんき見直し診断｜30秒・無料</title>
+<meta name="description" content="店舗・事務所・工場の電気代を30秒で無料診断。質問3つ・工事なし・今の会社への連絡も不要。今いくら下げられるか概算でチェックできます。">
+<style>
+  :root{
+    --ink:#0b0d12; --ink2:#11151c; --card:#161b24; --line:#222a36;
+    --lime:#c8fb4b; --lime-dk:#9ec42a; --white:#fff; --mute:#9aa3ad; --mute2:#6b7480;
+    --line-green:#06c755; --ink-text:#0b0d12; --radius:18px;
+    --font:"Hiragino Kaku Gothic ProN","Yu Gothic",YuGothic,"Noto Sans JP",
+           system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    font-family:var(--font); color:var(--white);
+    background:
+      radial-gradient(60% 38% at 50% 18%, rgba(200,251,75,.10), transparent 70%),
+      linear-gradient(180deg,var(--ink),var(--ink2));
+    min-height:100dvh; display:flex; justify-content:center;
+    line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{width:100%; max-width:440px; min-height:100dvh; display:flex; flex-direction:column;
+        padding:18px 20px 28px; position:relative}
+  .brand{display:flex;align-items:center;gap:8px;justify-content:center;padding-top:6px}
+  .bolt{width:22px;height:22px;flex:none}
+  .brand b{font-size:16px;font-weight:800;letter-spacing:.02em}
+  .pr{position:absolute;right:20px;top:18px;font-size:11px;color:var(--mute);
+      border:1px solid #ffffff44;border-radius:6px;padding:2px 7px}
+  .sub{ text-align:center;color:var(--mute);font-size:11px;margin-top:3px }
+  .prog{height:5px;background:#1d242f;border-radius:99px;margin:18px 0 6px;overflow:hidden}
+  .prog>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--lime-dk),var(--lime));
+          border-radius:99px;transition:width .45s cubic-bezier(.2,.8,.2,1)}
+  .step-label{font-size:12px;color:var(--mute);text-align:right;height:16px}
+  .screens{flex:1;display:flex;align-items:stretch;margin-top:8px}
+  .screen{display:none;flex:1;flex-direction:column;animation:in .4s ease both}
+  .screen.on{display:flex}
+  @keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  h1{font-size:30px;font-weight:800;line-height:1.28;letter-spacing:.01em;margin-bottom:6px}
+  h1 .hl{color:var(--lime)}
+  .lead{color:var(--mute);font-size:14px;margin:10px 0 22px}
+  .q{font-size:21px;font-weight:800;margin:6px 0 4px}
+  .qsub{color:var(--mute);font-size:13px;margin-bottom:18px}
+  .opts{display:grid;gap:12px;margin-top:6px}
+  .opts.two{grid-template-columns:1fr 1fr}
+  .opt{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);
+       padding:16px 14px;font-size:15px;font-weight:700;color:var(--white);text-align:center;
+       cursor:pointer;transition:.18s;display:flex;align-items:center;justify-content:center;min-height:56px}
+  .opt:active{transform:scale(.97)}
+  .opt.sel{border-color:var(--lime);background:rgba(200,251,75,.10);
+           box-shadow:0 0 0 3px rgba(200,251,75,.12)}
+  .cta{margin-top:auto;padding-top:20px}
+  .btn{width:100%;border:0;border-radius:99px;padding:18px;font-size:17px;font-weight:800;
+       font-family:inherit;background:var(--lime);color:var(--ink-text);cursor:pointer;
+       box-shadow:0 10px 30px rgba(200,251,75,.28);transition:.18s}
+  .btn:active{transform:translateY(1px)}
+  .btn[disabled]{opacity:.4;box-shadow:none;cursor:not-allowed}
+  .btn.line{background:var(--line-green);color:#fff;box-shadow:0 10px 30px rgba(6,199,85,.3);
+            display:flex;align-items:center;justify-content:center;gap:9px;text-decoration:none}
+  .btn.ghost{background:transparent;color:var(--mute);box-shadow:none;font-size:13px;font-weight:600;
+             padding:12px;border:1px solid var(--line)}
+  .back{color:var(--mute2);font-size:13px;background:none;border:0;font-family:inherit;
+        cursor:pointer;padding:8px 0;align-self:flex-start;margin-bottom:6px}
+  .calc{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center}
+  .spin{width:54px;height:54px;border:5px solid #222a36;border-top-color:var(--lime);
+        border-radius:50%;animation:sp .8s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .save-box{text-align:center;margin:6px 0 14px}
+  .save-box .k{color:var(--mute);font-size:14px}
+  .save-box .v{font-size:54px;font-weight:800;color:var(--lime);line-height:1.1;margin:4px 0;
+               text-shadow:0 0 36px rgba(200,251,75,.35)}
+  .save-box .v small{font-size:24px}
+  .save-box .u{color:var(--mute);font-size:13px}
+  .plan{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);
+        padding:15px 16px;margin-bottom:11px;display:flex;align-items:center;gap:12px}
+  .plan .rank{width:30px;height:30px;flex:none;border-radius:8px;background:rgba(200,251,75,.14);
+              color:var(--lime);font-weight:800;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .plan .nm{font-weight:800;font-size:15px}
+  .plan .pr-i{font-size:10px;color:var(--mute2);border:1px solid #ffffff33;border-radius:5px;padding:1px 5px;margin-left:6px}
+  .plan .dn{color:var(--mute);font-size:12px;margin-top:2px}
+  .plan .amt{margin-left:auto;text-align:right}
+  .plan .amt b{color:var(--lime);font-size:17px}
+  .plan .amt span{display:block;color:var(--mute);font-size:11px}
+  .judge{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);
+         padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px}
+  .judge .badge{flex:none;padding:8px 14px;border-radius:99px;font-weight:800;font-size:15px;
+                background:rgba(200,251,75,.14);color:var(--lime)}
+  .judge .jt{font-weight:700;font-size:14px}
+  .judge .js{color:var(--mute);font-size:12px;margin-top:2px}
+  .nextstep{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);
+            padding:16px;margin-bottom:11px}
+  .nextstep .h{font-weight:800;font-size:14px;margin-bottom:10px}
+  .nextstep .row{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--mute);margin-bottom:7px;line-height:1.55}
+  .nextstep .row b{color:var(--white);font-weight:700}
+  .nextstep .ck{color:var(--lime);flex:none;font-weight:800}
+  .or{display:flex;align-items:center;gap:10px;color:var(--mute2);font-size:12px;margin:14px 0}
+  .or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:13px;color:var(--mute);margin-bottom:7px;font-weight:600}
+  .field input{width:100%;background:var(--card);border:1.5px solid var(--line);border-radius:12px;
+               padding:14px;color:var(--white);font-size:15px;font-family:inherit}
+  .field input:focus{outline:none;border-color:var(--lime)}
+  .note{font-size:11px;color:var(--mute2);line-height:1.6;margin-top:6px}
+  .foot{font-size:10px;color:var(--mute2);text-align:center;line-height:1.7;margin-top:18px}
+  .foot a{color:var(--mute)}
+  .done{text-align:center;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+  .done .ic{width:72px;height:72px;border-radius:50%;background:rgba(200,251,75,.14);
+            display:flex;align-items:center;justify-content:center}
+  .disc{font-size:11px;color:var(--mute2);text-align:center;margin-top:14px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="pr">PR</div>
+  <div class="brand">
+    <svg class="bolt" viewBox="0 0 24 24" fill="none"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" fill="#c8fb4b"/></svg>
+    <b>法人でんき見直し診断</b>
+  </div>
+  <div class="sub">店舗・事務所・工場 ／ 高圧・低圧・動力 対応</div>
+
+  <div class="prog" id="progWrap" style="display:none"><i id="prog"></i></div>
+  <div class="step-label" id="stepLabel"></div>
+
+  <div class="screens">
+
+    <!-- INTRO -->
+    <section class="screen on" data-screen="intro">
+      <div style="margin:auto 0">
+        <h1>その電気代、<br>年間 <span class="hl">いくら減らせる</span>？</h1>
+        <p class="lead">質問は3つだけ・約30秒。<br>今の会社への連絡も、工事・設備変更も不要です。</p>
+      </div>
+      <div class="cta">
+        <button class="btn" onclick="go('q1')">無料で診断する →</button>
+        <div class="disc">※診断結果は概算です。実際の削減額は使用量・契約・業種により異なります。</div>
+      </div>
+    </section>
+
+    <!-- Q1 -->
+    <section class="screen" data-screen="q1">
+      <button class="back" onclick="go('intro')">← 戻る</button>
+      <div class="q">エリアを選んでください</div>
+      <div class="qsub">提供エリアのプランだけを表示します</div>
+      <div class="opts two" id="optArea"></div>
+    </section>
+
+    <!-- Q2 -->
+    <section class="screen" data-screen="q2">
+      <button class="back" onclick="go('q1')">← 戻る</button>
+      <div class="q">業種を選んでください</div>
+      <div class="qsub">ざっくりでOK。最適なプランの絞り込みに使います</div>
+      <div class="opts two" id="optInd"></div>
+    </section>
+
+    <!-- Q3 -->
+    <section class="screen" data-screen="q3">
+      <button class="back" onclick="go('q2')">← 戻る</button>
+      <div class="q">毎月の電気代は？</div>
+      <div class="qsub">だいたいの平均でOK（請求書があれば正確です）</div>
+      <div class="opts" id="optBill"></div>
+    </section>
+
+    <!-- CALC -->
+    <section class="screen" data-screen="calc">
+      <div class="calc">
+        <div class="spin"></div>
+        <div style="color:var(--mute);font-size:14px">エリアと使用量から<br>概算を計算しています…</div>
+      </div>
+    </section>
+
+    <!-- RESULT -->
+    <section class="screen" data-screen="result">
+      <div class="q">診断結果</div>
+      <div class="qsub" id="resCond"></div>
+      <div class="save-box">
+        <div class="k">年間で</div>
+        <div class="v"><small>約</small><span id="saveNum">0</span><small>円</small></div>
+        <div class="u">下がる可能性があります（概算）</div>
+      </div>
+      <div id="judge" class="judge"></div>
+      <div id="nextstep" class="nextstep"></div>
+      <div class="cta">
+        <a class="btn line" id="lineBtn" href="#" target="_blank" rel="noopener">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 5.69 2 10.22c0 4.06 3.62 7.46 8.5 8.1.33.07.78.22.9.5.1.26.07.66.03.92l-.14.86c-.04.26-.2 1.02.9.56 1.1-.46 5.9-3.47 8.05-5.94 1.48-1.62 2.19-3.27 2.19-4.99C22.4 5.69 17.52 2 12 2Z"/></svg>
+          LINEで診断結果を受け取る
+        </a>
+        <div class="or">または</div>
+        <button class="btn ghost" onclick="go('lead')">メール／電話で受け取る</button>
+        <div class="disc">※削減額は概算です。お客様の使用状況に合う電力会社は、診断後に担当が中立に選定してご案内します。</div>
+      </div>
+    </section>
+
+    <!-- LEAD (form fallback) -->
+    <section class="screen" data-screen="lead">
+      <button class="back" onclick="go('result')">← 戻る</button>
+      <div class="q">送付先を入力してください</div>
+      <div class="qsub">診断結果の詳細と、お申込み手順をお送りします</div>
+      <div class="field"><label>会社名・屋号</label><input id="f_co" placeholder="例）株式会社○○ / ○○商店" oninput="checkForm()"></div>
+      <div class="field"><label>ご担当者名</label><input id="f_name" placeholder="例）山田 太郎" oninput="checkForm()"></div>
+      <div class="field"><label>メールアドレス または 電話番号</label><input id="f_contact" placeholder="例）info@example.com" oninput="checkForm()"></div>
+      <p class="note">ご入力情報は、診断結果のご案内およびプランのご提案のためにのみ利用します。第三者への提供は行いません。</p>
+      <div class="cta">
+        <button class="btn" id="submitBtn" disabled onclick="submitLead()">結果を受け取る</button>
+      </div>
+    </section>
+
+    <!-- DONE -->
+    <section class="screen" data-screen="done">
+      <div class="done">
+        <div class="ic"><svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#c8fb4b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h1 style="font-size:24px">送信が完了しました</h1>
+        <p class="lead" style="margin:0">担当者より、診断結果の詳細とお申込み手順をご連絡します。少々お待ちください。</p>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+  // ===================== CONFIG（ここだけ差し替えればOK） =====================
+  const CONFIG = {
+    // LINE公式アカウントの友だち追加URL（診断専用 or 既存。例 https://lin.ee/xxxxxxx）
+    LINE_ADD_URL: "https://lin.ee/5B4QifG",
+    // フォーム送信先＝GAS Web App の /exec URL（gas_relay.gs をデプロイして貼る）。空ならPOSTせず完了画面のみ。
+    LEAD_ENDPOINT: "",
+    // 概算削減率（取扱い各社の実力に合わせて控えめに設定。0.07＝7%）
+    SAVE_RATE: 0.08,
+    // 取扱い社数（※社名は公開しない＝併売禁止対応。"複数社から中立に最適な1社"を強みとして提示）
+    PROVIDER_COUNT: 6,
+    // フッターの運営者表記（特商法・景表法対応。実会社情報に差し替え）
+    COMPANY: {
+      name: "株式会社Naviris",
+      addr: "埼玉県戸田市本町4-6-16-506",
+      tel: "050-5291-6528",
+      note: "本ページは電力切替の取次・紹介を行う広告（PR）です。"
+    }
+  };
+  // ==========================================================================
+
+  const AREAS = ["北海道","東北","東京","中部","北陸","関西","中国","四国","九州","沖縄"];
+  const INDS  = ["飲食店","美容室","クリニック","小売店","オフィス","工場","その他"];
+  const BILLS = [
+    {label:"〜3万円", mid:20000},
+    {label:"3〜10万円", mid:65000},
+    {label:"10〜30万円", mid:200000},
+    {label:"30〜50万円", mid:400000},
+    {label:"50万円〜", mid:700000},
+  ];
+
+  const state = {area:null, ind:null, bill:null, annual:0};
+
+  function buildOpts(){
+    const a=document.getElementById('optArea');
+    AREAS.forEach(v=>a.appendChild(mkOpt(v,()=>{state.area=v;mark(a,v);setTimeout(()=>go('q2'),180);})));
+    const i=document.getElementById('optInd');
+    INDS.forEach(v=>i.appendChild(mkOpt(v,()=>{state.ind=v;mark(i,v);setTimeout(()=>go('q3'),180);})));
+    const b=document.getElementById('optBill');
+    BILLS.forEach(o=>b.appendChild(mkOpt(o.label,()=>{state.bill=o;mark(b,o.label);setTimeout(()=>runCalc(),180);})));
+  }
+  function mkOpt(text,fn){
+    const d=document.createElement('div');d.className='opt';d.textContent=text;d.dataset.v=text;
+    d.onclick=fn;return d;
+  }
+  function mark(box,v){[...box.children].forEach(c=>c.classList.toggle('sel',c.dataset.v===v));}
+
+  const LABELS = {q1:"STEP 1 / 3", q2:"STEP 2 / 3", q3:"STEP 3 / 3"};
+  function go(s){
+    document.querySelectorAll('.screen').forEach(el=>el.classList.toggle('on',el.dataset.screen===s));
+    const showProg = ["q1","q2","q3"].includes(s);
+    document.getElementById('progWrap').style.display = showProg?'block':'none';
+    document.getElementById('stepLabel').textContent = LABELS[s]||'';
+    const idx = {q1:1,q2:2,q3:3}[s]||0;
+    document.getElementById('prog').style.width = (idx/3*100)+'%';
+    window.scrollTo(0,0);
+  }
+
+  function runCalc(){ go('calc'); setTimeout(showResult, 1400); }
+
+  function showResult(){
+    const annual = Math.round(state.bill.mid*12*CONFIG.SAVE_RATE/1000)*1000;
+    state.annual = annual;
+    document.getElementById('resCond').textContent =
+      `${state.area}エリア・${state.ind}・月${state.bill.label}の場合`;
+    const el=document.getElementById('saveNum'); let cur=0;
+    const steps=28, inc=annual/steps; let n=0;
+    const t=setInterval(()=>{cur+=inc;n++;if(n>=steps){cur=annual;clearInterval(t);}
+      el.textContent=Math.round(cur).toLocaleString('ja-JP');},22);
+    // 見直し余地の判定（社名は出さず、概算と余地だけ示す）
+    const lvl = state.bill.mid >= 200000 ? {b:"大", t:"見直し余地：大", s:"使用量が多く、契約の最適化でまとまった差が出やすい水準です"}
+              : state.bill.mid >= 65000  ? {b:"中", t:"見直し余地：中", s:"契約プランの見直しで下げられる可能性があります"}
+              :                            {b:"有", t:"見直し余地：あり", s:"小規模でも契約の最適化で下がるケースがあります"};
+    document.getElementById('judge').innerHTML =
+      `<div class="badge">${lvl.b}</div><div><div class="jt">${lvl.t}</div><div class="js">${lvl.s}</div></div>`;
+    // 次の一歩：複数社から中立に最適な“1社”を提案（社名は出さない＝併売禁止対応）
+    document.getElementById('nextstep').innerHTML =
+      `<div class="h">このあとの流れ</div>
+       <div class="row"><span class="ck">✓</span><div>取扱い<b>${CONFIG.PROVIDER_COUNT}社</b>の中から、あなたの使用状況に合う<b>最適な1社</b>を中立に選定</div></div>
+       <div class="row"><span class="ck">✓</span><div>LINEで<b>詳しい診断結果</b>と<b>具体的な提案</b>をお届け</div></div>
+       <div class="row"><span class="ck">✓</span><div>工事・設備変更なし。今の会社への連絡も基本おまかせ</div></div>`;
+    document.getElementById('lineBtn').href = CONFIG.LINE_ADD_URL;
+    go('result');
+  }
+
+  function checkForm(){
+    const ok = document.getElementById('f_co').value.trim()
+            && document.getElementById('f_name').value.trim()
+            && document.getElementById('f_contact').value.trim();
+    document.getElementById('submitBtn').disabled = !ok;
+  }
+  function submitLead(){
+    const payload = {
+      type: "denki_shindan_lead",
+      company: document.getElementById('f_co').value.trim(),
+      name: document.getElementById('f_name').value.trim(),
+      contact: document.getElementById('f_contact').value.trim(),
+      area: state.area, industry: state.ind,
+      bill: state.bill ? state.bill.label : "", est_saving: state.annual,
+      ua: navigator.userAgent, ts: new Date().toISOString()
+    };
+    const btn=document.getElementById('submitBtn'); btn.disabled=true; btn.textContent="送信中…";
+    if (CONFIG.LEAD_ENDPOINT){
+      // no-cors でGASへ。レスポンスは読めないが記録・通知は実行される
+      fetch(CONFIG.LEAD_ENDPOINT, {method:"POST", mode:"no-cors",
+        headers:{"Content-Type":"text/plain;charset=utf-8"}, body:JSON.stringify(payload)})
+        .finally(()=>go('done'));
+    } else {
+      console.log("LEAD(no endpoint set):", payload);
+      go('done');
+    }
+  }
+
+  // footer
+  (function(){
+    const c=CONFIG.COMPANY;
+    document.getElementById('foot').innerHTML =
+      `運営：${c.name}｜${c.addr}｜TEL ${c.tel}<br>${c.note}`;
+    // 受け皿(GAS)未設定時：メール/電話フォームは送信先が無く取りこぼすため、
+    // 二次導線を「電話で相談」(受け皿不要で確実に繋がる)に差し替える。
+    if (!CONFIG.LEAD_ENDPOINT){
+      const g=document.querySelector('.btn.ghost');
+      if (g){
+        const tel=(c.tel||'').replace(/[^0-9+]/g,'');
+        g.textContent='お電話で相談する（'+c.tel+'）';
+        g.onclick=function(){ location.href='tel:'+tel; };
+      }
+    }
+  })();
+
+  buildOpts();
+</script>
+</body>
+</html>
